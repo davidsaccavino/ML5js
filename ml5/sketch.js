@@ -1,6 +1,9 @@
 let video;
 let poseNet;
 let poses = [];
+let yolo;
+let status;
+let objects = [];
 
 function setup() {
   createCanvas(640, 480);
@@ -11,11 +14,28 @@ function setup() {
   poseNet = ml5.poseNet(video, modelReady);
   // This sets up an event that fills the global variable "poses"
   // with an array every time new poses are detected
+  yolo = ml5.YOLO(video, startDetecting);
+
+
   poseNet.on('pose', function(results) {
     poses = results;
   });
   // Hide the video element, and just show the canvas
   video.hide();
+
+  status = select('#status');
+}
+
+function startDetecting() {
+  console.log('Model loaded!');
+  detect();
+}
+
+function detect() {
+  yolo.detect(function(err, results){
+    objects = results;
+    detect();
+  });
 }
 
 function modelReady() {
@@ -29,7 +49,15 @@ function draw() {
   // We can call both functions to draw all keypoints and the skeletons
   drawKeypoints();
   drawSkeleton();
-
+  for (let i = 0; i < objects.length; i++) {
+    noStroke();
+    // fill(0, 255, 0);
+    text(objects[i].className, objects[i].x*width, objects[i].y*height - 5);
+    noFill();
+    // strokeWeight(4);
+    stroke(255, 0, 0);
+    rect(objects[i].x*width, objects[i].y*height, objects[i].w*width, objects[i].h*height);
+  }
 }
 
 // A function to draw ellipses over the detected keypoints
