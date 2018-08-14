@@ -39,7 +39,6 @@ function detect() {
 
 function poseNetReady() {
   console.log('poseNet Model Loaded');
-  
 }
 
 function draw() {
