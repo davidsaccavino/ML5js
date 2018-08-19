@@ -7,7 +7,12 @@ let objects = [];
 
 function setup() {
   createCanvas(640, 480);
+  try{ 
   video = createCapture(VIDEO);
+  }
+  catch(error){
+    console.log(error + '\n' + 'Must have a camera connected.');
+  }
   video.size(width, height);
 
   // Create a new poseNet method with a single detection
